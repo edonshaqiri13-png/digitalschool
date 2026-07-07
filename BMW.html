@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BMW — Demo</title>
+    <style>
+      :root{--bg:#f1f5f7;--card:#fff;--accent:#0b63d6;--muted:#6b7280;--text:#0f1724;--max-width:1200px}
+      *{box-sizing:border-box}
+      html,body{height:100%}
+      body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:var(--bg)}
+      .nav{position:fixed;left:0;right:0;top:0;z-index:60;background:transparent;padding:18px 2rem;transition:background .25s,box-shadow .25s}
+      .nav.scrolled{background:rgba(255,255,255,0.98);box-shadow:0 6px 18px rgba(12,20,30,0.06)}
+      .nav-inner{max-width:var(--max-width);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 1rem}
+      .brand{display:flex;align-items:center;gap:12px;font-weight:700}
+      .logo-img{width:44px;height:44px;border-radius:50%;object-fit:cover;display:block}
+      .nav-links{display:flex;gap:18px;align-items:center}
+      .nav-links a{color:var(--text);text-decoration:none;font-weight:600;opacity:.9}
+      .hero{min-height:70vh;display:flex;align-items:flex-end;background-size:cover;background-position:center;padding:0;margin-top:0;position:relative}
+      .hero-inner{max-width:var(--max-width);margin:0 auto;position:relative;padding:4rem 1rem;display:flex;align-items:flex-end}
+      .hero-card{background:linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.05));padding:36px;border-radius:12px;color:white;max-width:720px}
+      .hero h1{font-size:3.2rem;margin:0 0 12px;line-height:1.03}
+      .hero p{margin:0 0 18px;color:rgba(255,255,255,0.95);font-weight:600}
+      .actions{display:flex;gap:12px}
+      .btn{display:inline-block;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700}
+      .btn-primary{background:var(--accent);color:#fff}
+      .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.18)}
+      .container{max-width:var(--max-width);margin:0 auto;padding:2rem}
+      .panel{background:rgba(255,255,255,0.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:28px;border-radius:12px;box-shadow:0 12px 30px rgba(12,20,30,0.04);margin-bottom:28px;border:1px solid rgba(255,255,255,0.6)}
+      .muted{color:var(--muted)}
+      .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:16px}
+      .card{background:var(--card);border-radius:10px;border:1px solid rgba(15,23,42,0.04);overflow:hidden;transition:transform .18s,box-shadow .18s}
+      .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(12,20,30,0.08)}
+      .card img{width:100%;height:220px;object-fit:cover;display:block}
+      .card-content{padding:16px}
+      .card-title{color:var(--accent);font-weight:700;margin:0 0 6px}
+      .price{font-weight:800;color:var(--accent);margin-top:10px}
+      .card-actions{margin-top:18px}
+      .card-button{display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:700;text-decoration:none;cursor:pointer;transition:background .2s,transform .2s}
+      .card-button:hover{background:#094ec1;transform:translateY(-1px)}
+      .contact-grid{display:grid;grid-template-columns:1fr 420px;gap:18px;align-items:start;margin-top:12px}
+      .dealer-side{display:flex;flex-direction:column;gap:16px}
+      .selected-car-card{background:#fff;border:1px solid rgba(15,23,42,0.08);border-radius:16px;overflow:hidden;box-shadow:0 14px 40px rgba(15,23,42,0.08)}
+      .selected-car-card img{width:100%;height:240px;object-fit:cover;display:block}
+      .selected-car-content{padding:16px}
+      .selected-label{font-size:.75rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.16em;margin-bottom:10px}
+      .selected-car-title{font-size:1.1rem;font-weight:800;color:var(--text);margin:0 0 6px}
+      .selected-car-price{font-weight:700;color:var(--accent);margin:0 0 12px}
+      .selected-placeholder{padding:28px;text-align:center;color:var(--muted);border:1px dashed rgba(15,23,42,0.18);border-radius:16px;background:rgba(245,248,253,0.8)}
+      .selected-placeholder strong{display:block;margin-bottom:8px}
+      .map-placeholder{background:linear-gradient(180deg,#eef6ff,#f8fbff);border-radius:8px;min-height:240px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
+      .contact-form input,.contact-form textarea{width:100%;padding:10px;border:1px solid #e6edf3;border-radius:8px;margin-bottom:10px;font-size:1rem}
+      .contact-form button{background:var(--accent);color:#fff;border:none;padding:12px 14px;border-radius:8px;font-weight:700;cursor:pointer}
+      .map-placeholder{background:linear-gradient(180deg,#eef6ff,#f8fbff);border-radius:8px;min-height:240px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
+      footer{padding:36px 0;text-align:center;color:var(--muted)}
+      /* Scroll to top button */
+      .scroll-top{position:fixed;right:20px;bottom:28px;width:48px;height:48px;border-radius:12px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(11,99,214,0.18);opacity:0;transform:translateY(12px);transition:opacity .2s,transform .2s}
+      .scroll-top.show{opacity:1;transform:translateY(0)}
+
+      /* Map container */
+      #map{width:100%;height:100%;min-height:240px;border-radius:8px}
+      @media (max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.contact-grid{grid-template-columns:1fr}}
+      @media (max-width:640px){.grid{grid-template-columns:1fr}.hero h1{font-size:2rem;padding-bottom:0}}
+      /* Leaflet overrides for cleaner look */
+      .leaflet-control-attribution{display:none}
+
+      /* Footer - light mode BMW style */
+      .site-footer{background:#ffffff;border-top:1px solid rgba(15,23,42,0.04);color:var(--muted);padding:40px 0}
+      .footer-grid{display:grid;grid-template-columns:1fr repeat(3,1fr);gap:24px;align-items:start}
+      .footer-col{min-width:0}
+      .footer-brand{display:flex;flex-direction:column;gap:8px}
+      .footer-brand .logo-img{width:56px;height:56px;border-radius:8px}
+      .footer-title{font-weight:700;color:var(--text);margin-bottom:8px}
+      .footer-links{list-style:none;padding:0;margin:0}
+      .footer-links li{margin:8px 0}
+      .footer-links a{color:var(--muted);text-decoration:none}
+      .footer-links a:hover{color:var(--text)}
+      .social-row{display:flex;gap:10px;align-items:center}
+      .social-btn{width:36px;height:36px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:#f3f4f6;color:var(--text);text-decoration:none}
+      .footer-bottom{margin-top:18px;border-top:1px solid rgba(15,23,42,0.04);padding-top:14px;color:var(--muted);font-size:.95rem;text-align:center}
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-sA+4RjQb7m6QYdFQ4X+6S9q4q8e+8k5w5g5h4o7jz0M=" crossorigin=""/>
+  </head>
+  <body>
+    <header class="nav" id="siteNav">
+      <div class="nav-inner">
+      <div class="brand"><a href="#"><img src="BMW.jpg" alt="BMW logo" class="logo-img"></a><div>BMW Demo</div></div>
+        <nav class="nav-links">
+          <a href="#models">Models</a>
+          <a href="#gallery">Gallery</a>
+          <a href="#contact">Dealers</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero" style="background-image:url('bmw/BMW-7-Series-black-3.jpg')">
+      <div class="hero-inner">
+        <div class="hero-card">
+          <h1>THE NEW BMW 7 SERIES</h1>
+          <p>Designed to drive. Luxury and performance in one package.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#gallery">View models</a>
+            <a class="btn btn-ghost" href="#contact">Find dealer</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main>
+      <div class="container">
+        <section id="models" class="panel">
+          <h2>Explore models</h2>
+          <p class="muted">Browse different vehicle types, from compact models to SUVs and performance cars. This demo uses original text and placeholders rather than copying any single company's site.</p>
+        </section>
+
+        <section id="gallery" class="panel">
+          <h2>Gallery</h2>
+
+          <div class="grid">
+            <div class="card">
+              <img src="bmw/BMW-7-Series-black-3.jpg" alt="BMW 7 Series">
+              <div class="card-content">
+                <div class="card-title">BMW 7 Series</div>
+                <div class="muted">2024 • Luxury Sedan</div>
+                <div class="price">€45,000</div>
+                <div class="card-actions"><button class="card-button" type="button" data-title="BMW 7 Series" data-price="€45,000" data-image="bmw/BMW-7-Series-black-3.jpg">Buy now</button></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <img src="bmw/BMW-LimitedEdition-M4-CSL-all.avif" alt="BMW M4 CSL">
+              <div class="card-content">
+                <div class="card-title">BMW M4 CSL</div>
+                <div class="muted">2023 • Performance</div>
+                <div class="price">€52,500</div>
+                <div class="card-actions"><button class="card-button" type="button" data-title="BMW M4 CSL" data-price="€52,500" data-image="bmw/BMW-LimitedEdition-M4-CSL-all.avif">Buy now</button></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <img src="bmw/BMW-M340i-1160x653.webp" alt="BMW M340i">
+              <div class="card-content">
+                <div class="card-title">BMW M340i</div>
+                <div class="muted">2022 • Sport Sedan</div>
+                <div class="price">€39,900</div>
+                <div class="card-actions"><button class="card-button" type="button" data-title="BMW M340i" data-price="€39,900" data-image="bmw/BMW-M340i-1160x653.webp">Buy now</button></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <img src="bmw/BMW_7-Series_(G70)_750e_IMG_9358.jpg" alt="BMW 7 Series hybrid">
+              <div class="card-content">
+                <div class="card-title">BMW 7 Series Hybrid</div>
+                <div class="muted">2024 • Hybrid</div>
+                <div class="price">€68,200</div>
+                <div class="card-actions"><button class="card-button" type="button" data-title="BMW 7 Series Hybrid" data-price="€68,200" data-image="bmw/BMW_7-Series_(G70)_750e_IMG_9358.jpg">Buy now</button></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <img src="bmw/How-the-BMW-M4-Stands-Out-in-.avif" alt="BMW M4">
+              <div class="card-content">
+                <div class="card-title">BMW M4</div>
+                <div class="muted">2021 • Sport</div>
+                <div class="price">€74,300</div>
+                <div class="card-actions"><button class="card-button" type="button" data-title="BMW M4" data-price="€74,300" data-image="bmw/How-the-BMW-M4-Stands-Out-in-.avif">Buy now</button></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <img src="bmw/PHOTO-2023-04-18-16-10-59-1.jpg" alt="BMW">
+              <div class="card-content">
+                <div class="card-title">BMW Model</div>
+                <div class="muted">Year • Note</div>
+                <div class="price">€59,800</div>
+                <div class="card-actions"><button class="card-button" type="button" data-title="BMW Model" data-price="€59,800" data-image="bmw/PHOTO-2023-04-18-16-10-59-1.jpg">Buy now</button></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" class="panel">
+          <h2>Dealers & Contact</h2>
+          <p class="muted">Find a dealer near you or send us a message — use the form below to contact us.</p>
+
+          <div class="contact-grid">
+            <form class="contact-form" onsubmit="alert('Demo: message sent'); return false;">
+              <input type="text" name="name" placeholder="Your name" required>
+              <input type="email" name="email" placeholder="Email address" required>
+              <input type="text" name="subject" placeholder="Subject">
+              <textarea name="message" rows="6" placeholder="Your message" required></textarea>
+              <button type="submit">Send message</button>
+            </form>
+
+            <div class="dealer-side">
+              <div class="selected-car-card" id="selectedCarCard">
+                <img id="selectedCarImage" src="bmw/BMW-7-Series-black-3.jpg" alt="Selected BMW 7 Series">
+                <div class="selected-car-content">
+                  <div class="selected-label">Selected model</div>
+                  <div id="selectedCarTitle" class="selected-car-title">BMW 7 Series</div>
+                  <div id="selectedCarPrice" class="selected-car-price">€45,000</div>
+                </div>
+              </div>
+            </div>
+        </section>
+
+        <section class="panel">
+          <h2>FAQ</h2>
+          <p class="muted">Quick answers to common questions about ordering, delivery, and financing. (Add your FAQ items.)</p>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div class="footer-col footer-brand">
+          <img src="BMW.jpg" alt="BMW" class="logo-img">
+          <div style="font-weight:700;color:var(--text)">BMW Demo</div>
+          <div class="muted">Demo site — not affiliated with BMW AG.</div>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-title">Company</div>
+          <ul class="footer-links">
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-title">Get Help</div>
+          <ul class="footer-links">
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Shipping</a></li>
+            <li><a href="#">Returns</a></li>
+            <li><a href="#">Payment Options</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-title">Online Shop</div>
+          <ul class="footer-links">
+            <li><a href="#">Accessories</a></li>
+            <li><a href="#">Apparel</a></li>
+            <li><a href="#">Gifts</a></li>
+            <li><a href="#">Gift Cards</a></li>
+          </ul>
+          <div style="margin-top:10px" class="social-row">
+            <a class="social-btn" href="#" aria-label="Facebook">f</a>
+            <a class="social-btn" href="#" aria-label="Instagram">i</a>
+            <a class="social-btn" href="#" aria-label="Twitter">t</a>
+            <a class="social-btn" href="#" aria-label="YouTube">y</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">© Demo page — created for learning purposes. BMW trademarks are the property of their respective owners.</div>
+    </footer>
+
+    <div class="scroll-top" id="scrollTop" title="Scroll to top">↑</div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-QVb2Qb8ZgkM4f7ZyKXnXH0sV0Yw1s1q1PLJk8l+gQDY=" crossorigin=""></script>
+    <script>
+      (function(){
+        const nav=document.getElementById('siteNav');
+        function onScroll(){ if(window.scrollY>40) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
+          // toggle scroll-top
+          const st=document.getElementById('scrollTop'); if(window.scrollY>300) st.classList.add('show'); else st.classList.remove('show');
+        }
+        onScroll(); window.addEventListener('scroll', onScroll);
+
+        // Smooth scroll for internal links
+        const links = document.querySelectorAll('a[href^="#"]');
+        links.forEach(link => {
+          link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            if(!href || href === '#'){
+              e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); return;
+            }
+            if(href.startsWith('#')){
+              const target = document.querySelector(href);
+              if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth', block:'start'}); }
+            }
+          });
+        });
+
+        // Scroll to top button
+        const scrollBtn=document.getElementById('scrollTop');
+        scrollBtn.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
+
+        // Init Leaflet map
+        try{
+          const map = L.map('map', {scrollWheelZoom:false}).setView([48.1351,11.5820], 11);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19}).addTo(map);
+          const marker = L.marker([48.1351,11.5820]).addTo(map).bindPopup('Demo dealer location').openPopup();
+        }catch(e){ console.warn('Leaflet init failed', e); }
+
+        const selectedImage = document.getElementById('selectedCarImage');
+        const selectedTitle = document.getElementById('selectedCarTitle');
+        const selectedPrice = document.getElementById('selectedCarPrice');
+        const buyButtons = document.querySelectorAll('.card-button');
+
+        buyButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const title = button.dataset.title;
+            const price = button.dataset.price;
+            const image = button.dataset.image;
+            selectedImage.src = image;
+            selectedImage.alt = title;
+            selectedTitle.textContent = title;
+            selectedPrice.textContent = price;
+            document.getElementById('contact').scrollIntoView({behavior:'smooth', block:'start'});
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
